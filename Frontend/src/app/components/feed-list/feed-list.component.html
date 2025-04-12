@@ -1,0 +1,25 @@
+<h2>RSS Feeds</h2>
+
+<input [(ngModel)]="newFeedUrl" placeholder="Enter RSS feed URL" />
+<button (click)="addFeed()">Add Feed</button>
+
+<ul>
+  <li *ngFor="let feed of feeds">
+    <span (click)="selectFeed(feed.id)" style="cursor:pointer;">
+      {{ feed.title || feed.url }}
+    </span>
+    <button (click)="deleteFeed(feed.id)">🗑️</button>
+  </li>
+</ul>
+
+<hr />
+
+<div *ngIf="selectedFeedItems.length > 0">
+  <h3>Feed Items</h3>
+  <ul>
+    <li *ngFor="let item of selectedFeedItems">
+      <a [href]="item.link" target="_blank">{{ item.title }}</a>
+      <p>{{ item.pubDate | date:'medium' }}</p>
+    </li>
+  </ul>
+</div>
