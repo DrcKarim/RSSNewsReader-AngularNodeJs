@@ -3,6 +3,7 @@ import { FeedService } from '../../services/feed.service';
 import {FormsModule} from '@angular/forms';
 import {DatePipe} from '@angular/common';
 import { CommonModule } from '@angular/common';
+import { FeedFilterPipe } from '../../pipes/feed-filter.pipe';
 
 
 @Component({
@@ -12,7 +13,8 @@ import { CommonModule } from '@angular/common';
   imports: [
     FormsModule,
     DatePipe,
-    CommonModule
+    CommonModule,
+    FeedFilterPipe
   ],
   styleUrls: ['./feed-list.component.css']
 })
@@ -21,6 +23,8 @@ export class FeedListComponent implements OnInit {
   newFeedUrl = '';
   selectedFeedId: number | null = null;
   selectedFeedItems: any[] = [];
+  editingFeed: any = null;
+  searchText: string = '';
 
   constructor(private feedService: FeedService) {}
 
@@ -55,4 +59,94 @@ export class FeedListComponent implements OnInit {
       this.loadFeeds();
     });
   }
+
+
+  startEditing(feed: any): void {
+    this.editingFeed = { ...feed }; // clone to avoid live edits
+  }
+
+  cancelEdit(): void {
+    this.editingFeed = null;
+  }
+
+  updateFeed(): void {
+    if (!this.editingFeed) return;
+
+    this.feedService.updateFeed(this.editingFeed.id, {
+      title: this.editingFeed.title,
+      description: this.editingFeed.description
+    }).subscribe(() => {
+      this.loadFeeds();
+      this.editingFeed = null;
+    });
+  }
+
+  itemsPerPage = 5;
+  currentPage = 1;
+
+  get totalPages(): number {
+    return Math.ceil(this.selectedFeedItems.length / this.itemsPerPage);
+  }
+
+  get paginatedItems() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.selectedFeedItems.slice(start, start + this.itemsPerPage);
+  }
+
+  changePage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  visiblePages() {
+    const total = this.totalPages;
+    const current = this.currentPage;
+    const range = [];
+
+    const start = Math.max(1, current - 2);
+    const end = Math.min(total, current + 2);
+
+    for (let i = start; i <= end; i++) {
+      range.push(i);
+    }
+
+    return range;
+  }
+
+
+  // Feeds Pagination
+  feedsPerPage = 5;
+  currentFeedPage = 1;
+
+  get totalFeedPages(): number {
+    return Math.ceil(this.feeds.length / this.feedsPerPage);
+  }
+
+  get paginatedFeeds() {
+    const start = (this.currentFeedPage - 1) * this.feedsPerPage;
+    return this.feeds.slice(start, start + this.feedsPerPage);
+  }
+
+  visibleFeedPages(): number[] {
+    const total = this.totalFeedPages;
+    const current = this.currentFeedPage;
+    const range = [];
+
+    const start = Math.max(1, current - 2);
+    const end = Math.min(total, current + 2);
+
+    for (let i = start; i <= end; i++) {
+      range.push(i);
+    }
+
+    return range;
+  }
+
+  changeFeedPage(page: number) {
+    if (page >= 1 && page <= this.totalFeedPages) {
+      this.currentFeedPage = page;
+    }
+  }
+
 }

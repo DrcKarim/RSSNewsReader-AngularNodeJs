@@ -1,25 +1,96 @@
-<h2>RSS Feeds</h2>
+<!-- Header -->
+<header class="header">
+  <!-- <img src="assets/logov.png" alt="RSS Logo" /> -->
+  <h1>RSS Reader</h1>
+</header>
 
-<input [(ngModel)]="newFeedUrl" placeholder="Enter RSS feed URL" />
-<button (click)="addFeed()">Add Feed</button>
+<!-- Grid layout -->
+<div class="grid">
+  <!-- LEFT COLUMN: Feeds -->
+  <div class="column left">
+    <h2>RSS Feeds</h2>
 
-<ul>
-  <li *ngFor="let feed of feeds">
-    <span (click)="selectFeed(feed.id)" style="cursor:pointer;">
-      {{ feed.title || feed.url }}
-    </span>
-    <button (click)="deleteFeed(feed.id)">🗑️</button>
-  </li>
-</ul>
+    <input [(ngModel)]="newFeedUrl" placeholder="Enter RSS feed URL" />
+    <button (click)="addFeed()">Add Feed</button>
 
-<hr />
+    <br />
 
-<div *ngIf="selectedFeedItems.length > 0">
-  <h3>Feed Items</h3>
-  <ul>
-    <li *ngFor="let item of selectedFeedItems">
-      <a [href]="item.link" target="_blank">{{ item.title }}</a>
-      <p>{{ item.pubDate | date:'medium' }}</p>
-    </li>
-  </ul>
+    <input [(ngModel)]="searchText" placeholder="Search feeds..." />
+
+    <table class="feed-table">
+      <thead>
+      <tr>
+        <th>Title</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let feed of paginatedFeeds  | feedFilter:searchText">
+        <td (click)="selectFeed(feed.id)" class="feed-title">
+          {{ feed.title || feed.url }}
+        </td>
+        <td>
+          <button (click)="startEditing(feed)">✏️</button>
+        </td>
+        <td>
+          <button (click)="deleteFeed(feed.id)">🗑️</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <!-- Pagination for RSS Feed -->
+    <div class="pagination" *ngIf="totalFeedPages > 1">
+      <button (click)="changeFeedPage(currentFeedPage - 1)" [disabled]="currentFeedPage === 1">« Prev</button>
+
+      <button *ngFor="let page of visibleFeedPages()"
+              (click)="changeFeedPage(page)"
+              [class.active]="currentFeedPage === page">
+        {{ page }}
+      </button>
+
+      <button (click)="changeFeedPage(currentFeedPage + 1)" [disabled]="currentFeedPage === totalFeedPages">Next »</button>
+    </div>
+    <!-- End Pagination for RSS Feed -->
+
+  </div>
+
+  <!-- 🧩 POPUP MODAL -->
+  <div class="modal-backdrop" *ngIf="editingFeed">
+    <div class="modal">
+      <h3>Edit Feed</h3>
+      <label>Title:</label>
+      <input [(ngModel)]="editingFeed.title" />
+      <label>Description:</label>
+      <input [(ngModel)]="editingFeed.description" />
+      <div class="modal-buttons">
+        <button (click)="updateFeed()">💾 Save</button>
+        <button (click)="cancelEdit()">❌ Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: Feed Items -->
+  <div class="column right">
+    <h2>Feed Items</h2>
+    <ul>
+      <li *ngFor="let item of paginatedItems">
+        <a [href]="item.link" target="_blank">{{ item.title }}</a>
+        <p>{{ item.pubDate | date:'medium' }}</p>
+      </li>
+    </ul>
+    <!-- Pagination for Feed items -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">« Prev</button>
+
+      <button *ngFor="let page of visiblePages()"
+              (click)="changePage(page)"
+              [class.active]="currentPage === page">
+        {{ page }}
+      </button>
+      <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">Next »</button>
+    </div>
+    <!-- End Pagination for Feed items -->
+  </div>
+
 </div>

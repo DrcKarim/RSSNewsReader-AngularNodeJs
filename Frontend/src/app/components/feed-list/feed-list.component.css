@@ -1,0 +1,153 @@
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  background-color: #20232a;
+  color: white;
+  padding: 12px 20px;
+  gap: 12px;
+}
+.header img {
+  height: 40px;
+}
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* Grid layout */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Column styles */
+.column {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* Specific fix for right column layout (for sticky pagination) */
+.column.right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 500px;
+}
+.column.right ul {
+  flex-grow: 1;
+  padding: 0;
+  list-style: none;
+}
+
+/* Feed & item spacing */
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+li {
+  margin-bottom: 10px;
+}
+button {
+  margin-left: 5px;
+}
+
+/* Edit form */
+.edit-form input {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Feed table styling */
+.feed-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+.feed-table th,
+.feed-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+.feed-table th {
+  background-color: #f0f0f0;
+}
+.feed-title {
+  cursor: pointer;
+  font-weight: bold;
+  color: #333;
+}
+.feed-title:hover {
+  text-decoration: underline;
+}
+
+/* Pagination styling */
+.pagination {
+  margin-top: auto;
+  padding-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+.pagination button {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.pagination button.active {
+  background-color: #007bff;
+  color: white;
+}
+.pagination button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.column.left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 500px; /* adjust as needed */
+}
+
+
+/* Style for the pop up */
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.modal input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+}
