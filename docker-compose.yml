@@ -3,6 +3,7 @@ version: '3.8'
 services:
   frontend:
     image: dcrkarim/rssreader-frontend:latest
+    platform: linux/amd64
     ports:
       - "4200:4200"
     depends_on:
@@ -12,6 +13,7 @@ services:
 
   backend:
     image: dcrkarim/rssreader-backend:latest
+    platform: linux/amd64
     ports:
       - "3000:3000"
     environment:
@@ -27,6 +29,7 @@ services:
 
   db:
     image: postgres:15
+    platform: linux/amd64
     restart: always
     environment:
       POSTGRES_DB: rssreadersomone
@@ -47,4 +50,3 @@ networks:
 
 volumes:
   pgdata:
-
