@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: rssreadersomone
+      POSTGRES_USER: karimsomone
+      POSTGRES_PASSWORD: karimsomone
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U karimsomone -d rssreadersomone"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build: ./Backend
     ports:
@@ -10,25 +25,17 @@ services:
       - DB_USER=karimsomone
       - DB_PASSWORD=karimsomone
       - DB_HOST=db
+      - DB_PORT=5432
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   frontend:
     build: ./Frontend
     ports:
-      - "4200:80"
+      - "4200:4200"
     depends_on:
       - backend
-
-  db:
-    image: postgres:15
-    restart: always
-    environment:
-      POSTGRES_DB=rssreadersomone
-      POSTGRES_USER=karimsomone
-      POSTGRES_PASSWORD=karimsomone
-    volumes:
-      - pgdata:/var/lib/postgresql/data
 
 volumes:
   pgdata:

@@ -2,6 +2,8 @@
 
 A full-stack RSS Reader application built with **Angular 19.2.7** (frontend), **Node.js 18 + Express + Sequelize** (backend), and **PostgreSQL 15** as the database. RSS feeds can be added, parsed, displayed, refreshed, updated, and deleted.
 
+![alt text](screenshot.png)
+
 - Node.js: **v18+**
 - Angular: **v19**
 - PostgreSQL: **v15**
