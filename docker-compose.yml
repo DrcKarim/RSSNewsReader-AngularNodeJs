@@ -1,6 +1,29 @@
 version: '3.8'
 
 services:
+  frontend:
+    image: dcrkarim/rssreader-frontend:latest
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    image: dcrkarim/rssreader-backend:latest
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_NAME: rssreadersomone
+      DB_USER: karimsomone
+      DB_PASSWORD: karimsomone
+    depends_on:
+      - db
+    networks:
+      - app-network
+
   db:
     image: postgres:15
     restart: always
@@ -10,32 +33,11 @@ services:
       POSTGRES_PASSWORD: karimsomone
     volumes:
       - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U karimsomone -d rssreadersomone"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    networks:
+      - app-network
 
-  backend:
-    build: ./Backend
-    ports:
-      - "3000:3000"
-    environment:
-      - DB_NAME=rssreadersomone
-      - DB_USER=karimsomone
-      - DB_PASSWORD=karimsomone
-      - DB_HOST=db
-      - DB_PORT=5432
-    depends_on:
-      db:
-        condition: service_healthy
-
-  frontend:
-    build: ./Frontend
-    ports:
-      - "4200:4200"
-    depends_on:
-      - backend
+networks:
+  app-network:
 
 volumes:
   pgdata:
