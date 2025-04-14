@@ -20,7 +20,8 @@ services:
       DB_USER: karimsomone
       DB_PASSWORD: karimsomone
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
 
@@ -35,9 +36,15 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U karimsomone -d rssreadersomone"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   app-network:
 
 volumes:
   pgdata:
+

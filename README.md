@@ -41,43 +41,27 @@ A full-stack RSS Reader application built with **Angular 19.2.7** (frontend), **
 
 ---
 
-## Setup Instructions
-
-### 1. Clone the repo
+### Clone the repo
 
 ```bash
 git clone https://github.com/DrcKarim/RSSNewsReader-AngularNodeJs.git
 cd RSSNewsReader-AngularNodeJs
 ```
 
-### 2. Environment variables
- ==> You should create a user and password in PostgreSQL and replace DB_USER and DB_PASSWORD value
-```bash
-DB_NAME=rssreadersomone
-DB_USER=karimsomone
-DB_PASSWORD=karimsomone
-DB_HOST=localhost
-```
+## Setup Instructions For Docker
 
-### 5. Frontend Commands (optional, outside Docker)
-```bash
-cd Frontend
-npm install
-ng serve
-```
-
-### 6. Backend Commands (optional, outside Docker)
-```bash
-cd Backend
-npm install
-node app.js
-```
-
-### 3. Or you can run with Docker
+### 1. Run with Docker
 Run this commandes inside the folder of the project in terminal. 
+
 cd RSSNewsReader-AngularNodeJs
+
+Run this first and wait the pulling
 ```bash
 docker-compose pull
+```
+
+Then run this commande to build
+```bash
 docker-compose up --build
 ```
 
@@ -87,7 +71,7 @@ Frontend → http://localhost:4200
 
 PostgreSQL runs internally via Docker
 
-### 4. Docker Services Overview
+### 2. Docker Services Overview
 
 Frontend : 4200 
 
@@ -95,8 +79,35 @@ Backend : 3000
 
 db : 5432
 
+## Setup Instructions For Local building
 
+### 1. Environment variables
 
-### 7. License 
+ ==> You should create a user and password in PostgreSQL and replace DB_USER and DB_PASSWORD value
+ 
+```bash
+DB_NAME=rssreadersomone
+DB_USER=karimsomone
+DB_PASSWORD=karimsomone
+DB_HOST=localhost
+```
+
+### 2. Frontend Commands  
+
+```bash
+cd Frontend
+npm install
+ng serve
+```
+
+### 3. Backend Commands 
+
+```bash
+cd Backend
+npm install
+node app.js
+```
+
+## License 
 
 This project is for educational purposes — customize it freely.
