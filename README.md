@@ -7,6 +7,10 @@ A full-stack RSS Reader application built with **Angular 19.2.7** (frontend), **
 - Node.js: **v18+**
 - Angular: **v19**
 - PostgreSQL: **v15**
+
+### continuous integration and continuous delivery/continuous deployment  CI/CD is done:
+![alt text](cicd.png)
+
 ---
 
 ## Project Structure
