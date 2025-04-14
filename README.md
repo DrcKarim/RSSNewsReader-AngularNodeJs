@@ -28,7 +28,7 @@ A full-stack RSS Reader application built with **Angular 19.2.7** (frontend), **
 ## Technologies Used
 
 - **Frontend**: Angular, RxJS, TypeScript, HTML/CSS
-- **Backend**: Node.js, Express.js, Sequelize ORM
+- **Backend**: Node.js, Express.js, Sequelize ORM, JavaScript
 - **Database**: PostgreSQL
 - **Parsing**: rss-parser
 - **Containerization**: Docker, Docker Compose
@@ -41,10 +41,10 @@ A full-stack RSS Reader application built with **Angular 19.2.7** (frontend), **
 
 ```bash
 git clone https://github.com/DrcKarim/RSSNewsReader-AngularNodeJs.git
-cd rss-reader-app
+cd RSSNewsReader-AngularNodeJs
 ```
 
-# 2. Environment variables
+### 2. Environment variables
  ==> You should create a user and password in PostgreSQL and replace DB_USER and DB_PASSWORD value
 ```bash
 DB_NAME=rssreadersomone
@@ -53,21 +53,21 @@ DB_PASSWORD=karimsomone
 DB_HOST=localhost
 ```
 
-# 5. Frontend Commands (optional, outside Docker)
+### 5. Frontend Commands (optional, outside Docker)
 ```bash
 cd Frontend
 npm install
 ng serve
 ```
 
-# 6. Backend Commands (optional, outside Docker)
+### 6. Backend Commands (optional, outside Docker)
 ```bash
 cd Backend
 npm install
 node app.js
 ```
 
-# 3. Or you can run with Docker
+### 3. Or you can run with Docker
 ```bash
 docker-compose up --build
 ```
@@ -78,7 +78,7 @@ Frontend → http://localhost:4200
 
 PostgreSQL runs internally via Docker
 
-# 4. Docker Services Overview
+### 4. Docker Services Overview
 
 Frontend : 4200 
 
