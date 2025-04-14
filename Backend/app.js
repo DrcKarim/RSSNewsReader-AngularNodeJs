@@ -5,10 +5,18 @@ const { sequelize } = require('./models');
 const { createDatabaseIfNotExists } = require('./utils/initDB');
 require('dotenv').config();
 
+/*
+This is the main server file for the backend. It sets up an Express app with CORS and JSON parsing,
+mounts feed-related routes under /api/feeds, ensures the database exists, and then synchronizes Sequelize models.
+Once everything is ready, it starts the server on the specified port.
+This setup ensures the app is fully prepared before serving any requests.
+*/
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/api/feeds', feedRoutes);
+app.use('/api', feedRoutes);
 
 const PORT = process.env.PORT || 3000;
 
@@ -17,12 +25,12 @@ const PORT = process.env.PORT || 3000;
 
   sequelize.sync({ alter: true })
     .then(() => {
-      console.log('✅ Sequelize models synced');
+      console.log('==> Sequelize models synced <==');
       app.listen(PORT, () => {
-        console.log(`🚀 Server running on http://localhost:${PORT}`);
+        console.log(`==> Server running on http://localhost:${PORT}`);
       });
     })
     .catch((err) => {
-      console.error('❌ Sequelize sync error:', err);
+      console.error('==> X Sequelize sync error:', err);
     });
 })();

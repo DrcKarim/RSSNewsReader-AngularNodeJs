@@ -1,153 +1,228 @@
-/* Header */
-.header {
-  display: flex;
-  align-items: center;
-  background-color: #20232a;
-  color: white;
-  padding: 12px 20px;
-  gap: 12px;
-}
-.header img {
-  height: 40px;
-}
-.header h1 {
+/*=======================Reset & full width==================*/
+html, body {
   margin: 0;
-  font-size: 24px;
-}
-
-/* Grid layout */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 20px;
-  padding: 20px;
-}
-
-/* Column styles */
-.column {
-  border: 1px solid #ccc;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-/* Specific fix for right column layout (for sticky pagination) */
-.column.right {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 500px;
-}
-.column.right ul {
-  flex-grow: 1;
   padding: 0;
-  list-style: none;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
-/* Feed & item spacing */
-ul {
-  list-style: none;
-  padding-left: 0;
+/*========================Main layout==================*/
+.container {
+  display: flex;
+  width: 100vw;
+  height: calc(100vh - 50px); /* adjust if your header is taller/shorter */
 }
-li {
+
+/*===========================Sidebar=======================*/
+.sidebar {
+  width: 300px;
+  background: #f4f4f4;
+  padding: 15px;
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+.sidebar input {
+  width: 100%;
   margin-bottom: 10px;
 }
-button {
+.sidebar button {
   margin-left: 5px;
 }
-
-/* Edit form */
-.edit-form input {
-  display: block;
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar li {
+  padding: 8px;
+  cursor: pointer;
+}
+.sidebar li:hover {
+  background: #ddd;
+}
+.sidebar li.selected {
+  background-color: #ddd;
+  font-weight: bold;
+  border-left: 4px solid #73aff3;
+}
+/*======Add feed input ========*/
+.add-feed-row {
+  display: flex;
+  gap: 5px;
   margin-bottom: 10px;
 }
 
-/* Feed table styling */
-.feed-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-}
-.feed-table th,
-.feed-table td {
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
-  text-align: left;
-}
-.feed-table th {
-  background-color: #f0f0f0;
-}
-.feed-title {
-  cursor: pointer;
-  font-weight: bold;
-  color: #333;
-}
-.feed-title:hover {
-  text-decoration: underline;
-}
-
-/* Pagination styling */
-.pagination {
-  margin-top: auto;
-  padding-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-}
-.pagination button {
-  padding: 6px 10px;
+.add-feed-row input {
+  flex: 1;
+  padding: 4px 10px;
+  font-size: 14px;
+  height: 36px;
   border: 1px solid #ccc;
-  background-color: #f0f0f0;
-  cursor: pointer;
   border-radius: 4px;
+  box-sizing: border-box;
 }
-.pagination button.active {
-  background-color: #007bff;
-  color: white;
+.add-feed-row button {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
 }
-.pagination button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+/*======Search input======= */
+.search-container {
+  position: relative;
+  width: 100%;
 }
 
-.column.left {
+.search-container input {
+  width: 100%;
+  padding-left: 30px; /* space for icon */
+  height: 36px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #555;
+  pointer-events: none;
+}
+
+
+/*=============================Feed panel (main content)========================*/
+.feed-panel {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/*===Feed items===*/
+.feed-item {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+.feed-item .summary {
+  color: #555;
+  font-size: 14px;
+}
+.feed-item .date {
+  font-size: 12px;
+  color: #999;
+}
+
+.feed-header {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  min-height: 500px; /* adjust as needed */
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+}
+
+.feed-header h2 {
+  margin: 0;
+}
+
+.feed-header button {
+  padding: 5px 10px;
+}
+
+.loading-text {
+  font-size: 13px;
+  margin-left: 10px;
+  color: #777;
 }
 
 
-/* Style for the pop up */
-
+/*=========================Pop up======================*/
 .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* semi-transparent dark background */
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
+  justify-content: center;
+  z-index: 1000; /* ensure it's on top */
 }
 
 .modal {
-  background-color: white;
-  padding: 25px;
-  border-radius: 8px;
-  width: 300px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  text-align: center;
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
 }
 
+.modal h3 {
+  margin-top: 0;
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/*===Label styling ===*/
+.modal label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #444;
+}
+
+/*=== Inputs ===*/
 .modal input {
   width: 100%;
-  margin-bottom: 10px;
+  padding: 8px 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
 }
 
+/*===Buttons===*/
 .modal-buttons {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-buttons button {
+  padding: 6px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.modal-buttons button:first-child {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.modal-buttons button:first-child:hover {
+  background-color: #3e8e41;
+}
+
+.modal-buttons button:last-child {
+  background-color: #f44336;
+  color: white;
+}
+
+.modal-buttons button:last-child:hover {
+  background-color: #d32f2f;
 }

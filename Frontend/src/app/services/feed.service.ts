@@ -3,6 +3,14 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
+
+/*
+The FeedService is an Angular service that centralizes all HTTP requests related to RSS feed operations.
+It interacts with the backend API to perform tasks like getting all feeds, fetching feed items,
+adding new feeds, updating or deleting existing ones, and manually refreshing a feed. It uses
+Angular’s HttpClient for the requests and retrieves the base URL from environment variables (environment.apiUrl).
+*/
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,5 +42,10 @@ export class FeedService {
   // Delete feed
   deleteFeed(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/feeds/${id}`);
+  }
+
+  // Refresh feed
+  refreshFeed(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/feeds/${id}/refresh`, {});
   }
 }

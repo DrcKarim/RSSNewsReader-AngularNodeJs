@@ -18,6 +18,7 @@ import { FeedFilterPipe } from '../../pipes/feed-filter.pipe';
   ],
   styleUrls: ['./feed-list.component.css']
 })
+
 export class FeedListComponent implements OnInit {
   feeds: any[] = [];
   newFeedUrl = '';
@@ -25,51 +26,122 @@ export class FeedListComponent implements OnInit {
   selectedFeedItems: any[] = [];
   editingFeed: any = null;
   searchText: string = '';
+  selectedFeed: any = null;
+  isRefreshing = false;
+  itemsPerPage = 5;
+  currentPage = 1;
 
-  constructor(private feedService: FeedService) {}
+constructor(private feedService: FeedService) {}
 
-  ngOnInit(): void {
+
+ngOnInit(): void {
     this.loadFeeds();
   }
 
-  loadFeeds(): void {
+/*
+The loadFeeds() method calls the getFeeds() function from the feedService to fetch all RSS feeds from the backend.
+When the data is received (subscribed to),
+it assigns the result to the component's feeds property,
+making it available for display in the UI (like the sidebar list).
+*/
+loadFeeds(): void {
     this.feedService.getFeeds().subscribe((feeds) => {
       this.feeds = feeds;
     });
   }
 
-  selectFeed(feedId: number): void {
+/*
+The selectFeed() method updates the UI to show the selected feed.
+It sets selectedFeedId and finds the corresponding feed object to assign to selectedFeed.
+Then it calls the feedService.getFeedItems()
+to fetch and display the items for that feed,
+storing them in selectedFeedItems for rendering in the main panel.
+*/
+selectFeed(feedId: number): void {
     this.selectedFeedId = feedId;
+    this.selectedFeed = this.feeds.find(f => f.id === feedId);
     this.feedService.getFeedItems(feedId).subscribe((res) => {
       this.selectedFeedItems = res.items;
     });
   }
 
-  addFeed(): void {
+
+/*
+The refreshFeed() method manually refreshes the currently selected RSS feed. It sets a loading state (isRefreshing = true),
+calls feedService.refreshFeed() to re-parse the feed from its source,
+and then re-selects the feed to fetch the updated items.
+Once the refresh is complete (or fails), it resets the loading indicator.
+*/
+refreshFeed(): void {
+    if (!this.selectedFeedId) return;
+    this.isRefreshing = true;
+
+    this.feedService.refreshFeed(this.selectedFeedId).subscribe({
+      next: () => {
+        this.selectFeed(this.selectedFeedId!); // re-fetch
+      },
+      error: (err) => {
+        console.error('Error refreshing feed', err);
+      },
+      complete: () => {
+        this.isRefreshing = false;
+      }
+    });
+  }
+
+/*
+The addFeed() method adds a new RSS feed using the URL entered by the user. If the input is not empty,
+it calls feedService.addFeed() to send the URL to the backend.
+After successfully adding the feed, it clears the input field and reloads the list of feeds.
+*/
+addFeed(): void {
     if (!this.newFeedUrl) return;
-    this.feedService.addFeed(this.newFeedUrl).subscribe(() => {
-      this.newFeedUrl = '';
-      this.loadFeeds();
+    this.feedService.addFeed(this.newFeedUrl).subscribe({
+      next: () => {
+        this.newFeedUrl = '';
+        this.loadFeeds();
+      },
+      error: (err) => {
+        console.error('Failed to add feed', err);
+        alert('Invalid RSS URL or feed not supported.');
+      }
     });
   }
 
-  deleteFeed(id: number): void {
+/*
+The deleteFeed() method deletes a feed by its ID using feedService.deleteFeed().
+If the deleted feed is currently selected, it clears the selection and associated feed items.
+Then it reloads the feed list to update the sidebar.
+*/
+deleteFeed(id: number): void {
     this.feedService.deleteFeed(id).subscribe(() => {
-      if (this.selectedFeedId === id) this.selectedFeedItems = [];
+      if (this.selectedFeedId === id) this.selectedFeed = null; this.selectedFeedItems = [];
       this.loadFeeds();
     });
-  }
+}
 
-
-  startEditing(feed: any): void {
+/*
+The startEditing() method prepares a feed for editing by creating a copy of the selected feed object
+and storing it in editingFeed. This prevents immediate changes
+to the original feed in the UI until the user explicitly saves the edits.
+*/
+startEditing(feed: any): void {
     this.editingFeed = { ...feed }; // clone to avoid live edits
   }
 
-  cancelEdit(): void {
+/* The cancelEdit() method exits edit mode by clearing the editingFeed object.
+This closes the edit modal and discards any unsaved changes.
+ */
+cancelEdit(): void {
     this.editingFeed = null;
-  }
-
-  updateFeed(): void {
+}
+/*
+The updateFeed() method saves changes made to a feed’s title or description.
+It sends the updated data to the backend using feedService.updateFeed().
+Once the update is successful, it reloads the feed list to reflect the
+changes and closes the edit modal by clearing editingFeed.
+*/
+updateFeed(): void {
     if (!this.editingFeed) return;
 
     this.feedService.updateFeed(this.editingFeed.id, {
@@ -81,72 +153,14 @@ export class FeedListComponent implements OnInit {
     });
   }
 
-  itemsPerPage = 5;
-  currentPage = 1;
-
-  get totalPages(): number {
-    return Math.ceil(this.selectedFeedItems.length / this.itemsPerPage);
-  }
-
-  get paginatedItems() {
+/*
+The paginatedItems getter returns a subset of selectedFeedItems for the current page, based on pagination settings.
+It calculates the starting index using currentPage and itemsPerPage,
+then slices the array to display only the relevant feed items for that page.
+*/
+get paginatedItems() {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.selectedFeedItems.slice(start, start + this.itemsPerPage);
-  }
-
-  changePage(page: number) {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-    }
-  }
-
-  visiblePages() {
-    const total = this.totalPages;
-    const current = this.currentPage;
-    const range = [];
-
-    const start = Math.max(1, current - 2);
-    const end = Math.min(total, current + 2);
-
-    for (let i = start; i <= end; i++) {
-      range.push(i);
-    }
-
-    return range;
-  }
-
-
-  // Feeds Pagination
-  feedsPerPage = 5;
-  currentFeedPage = 1;
-
-  get totalFeedPages(): number {
-    return Math.ceil(this.feeds.length / this.feedsPerPage);
-  }
-
-  get paginatedFeeds() {
-    const start = (this.currentFeedPage - 1) * this.feedsPerPage;
-    return this.feeds.slice(start, start + this.feedsPerPage);
-  }
-
-  visibleFeedPages(): number[] {
-    const total = this.totalFeedPages;
-    const current = this.currentFeedPage;
-    const range = [];
-
-    const start = Math.max(1, current - 2);
-    const end = Math.min(total, current + 2);
-
-    for (let i = start; i <= end; i++) {
-      range.push(i);
-    }
-
-    return range;
-  }
-
-  changeFeedPage(page: number) {
-    if (page >= 1 && page <= this.totalFeedPages) {
-      this.currentFeedPage = page;
-    }
   }
 
 }

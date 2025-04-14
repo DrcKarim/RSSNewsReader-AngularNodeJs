@@ -1,6 +1,12 @@
 const { Client } = require('pg');
 require('dotenv').config();
 
+
+/*
+This script ensures that the target PostgreSQL database exists before running the app. It connects to the default postgres database,
+checks if the desired database (DB_NAME) exists, and creates it if not.
+This is useful for automating environment setup during development or deployment.
+*/
 const createDatabaseIfNotExists = async () => {
   const { DB_NAME, DB_USER, DB_PASSWORD, DB_HOST } = process.env;
 
@@ -21,7 +27,7 @@ const createDatabaseIfNotExists = async () => {
       console.log(`Database "${DB_NAME}" already exists.`);
     }
   } catch (err) {
-    console.error('❌ Failed to create/check database:', err);
+    console.error('Failed to create/check database:', err);
     process.exit(1);
   } finally {
     await client.end();
