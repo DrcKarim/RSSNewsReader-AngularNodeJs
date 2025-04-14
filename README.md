@@ -70,7 +70,10 @@ node app.js
 ```
 
 ### 3. Or you can run with Docker
+Run this commandes inside the folder of the project in terminal. 
+cd RSSNewsReader-AngularNodeJs
 ```bash
+docker-compose pull
 docker-compose up --build
 ```
 
