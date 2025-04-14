@@ -88,6 +88,6 @@ db : 5432
 
 
 
-# 7. License 
+### 7. License 
 
 This project is for educational purposes — customize it freely.

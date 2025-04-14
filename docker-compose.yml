@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./Backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_NAME=rssreadersomone
+      - DB_USER=karimsomone
+      - DB_PASSWORD=karimsomone
+      - DB_HOST=db
+    depends_on:
+      - db
+
+  frontend:
+    build: ./Frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB=rssreadersomone
+      POSTGRES_USER=karimsomone
+      POSTGRES_PASSWORD=karimsomone
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
