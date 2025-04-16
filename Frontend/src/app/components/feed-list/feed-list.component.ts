@@ -26,7 +26,10 @@ export class FeedListComponent implements OnInit {
   editingFeed: any = null;
   searchText: string = '';
 
+  selectedFeed: any = null;
+
   constructor(private feedService: FeedService) {}
+
 
   ngOnInit(): void {
     this.loadFeeds();
@@ -38,12 +41,34 @@ export class FeedListComponent implements OnInit {
     });
   }
 
+
   selectFeed(feedId: number): void {
     this.selectedFeedId = feedId;
+    this.selectedFeed = this.feeds.find(f => f.id === feedId);
     this.feedService.getFeedItems(feedId).subscribe((res) => {
       this.selectedFeedItems = res.items;
     });
   }
+
+  isRefreshing = false;
+
+  refreshFeed(): void {
+    if (!this.selectedFeedId) return;
+    this.isRefreshing = true;
+
+    this.feedService.refreshFeed(this.selectedFeedId).subscribe({
+      next: () => {
+        this.selectFeed(this.selectedFeedId!); // re-fetch
+      },
+      error: (err) => {
+        console.error('Error refreshing feed', err);
+      },
+      complete: () => {
+        this.isRefreshing = false;
+      }
+    });
+  }
+
 
   addFeed(): void {
     if (!this.newFeedUrl) return;
@@ -55,7 +80,7 @@ export class FeedListComponent implements OnInit {
 
   deleteFeed(id: number): void {
     this.feedService.deleteFeed(id).subscribe(() => {
-      if (this.selectedFeedId === id) this.selectedFeedItems = [];
+      if (this.selectedFeedId === id) this.selectedFeed = null; this.selectedFeedItems = [];
       this.loadFeeds();
     });
   }
@@ -148,5 +173,7 @@ export class FeedListComponent implements OnInit {
       this.currentFeedPage = page;
     }
   }
+
+
 
 }

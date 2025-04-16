@@ -1,1 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
+
+/*
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+*/
+/* Reset spacing */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Ensure everything inside respects full width */
+* {
+  box-sizing: inherit;
+}
+
+/* Optional: Centering fix */
+main, .app-container, .content, .container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}

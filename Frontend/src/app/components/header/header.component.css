@@ -1,0 +1,43 @@
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #20232a;
+  color: white;
+  padding: 15px 30px;
+  font-size: 20px;
+}
+
+
+
+.logo {
+  font-weight: bold;
+}
+
+.user button {
+  background-color: white;
+  color: #20232a;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.login-modal {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 11;
+}
+
