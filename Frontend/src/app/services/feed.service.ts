@@ -48,4 +48,10 @@ export class FeedService {
   refreshFeed(id: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/feeds/${id}/refresh`, {});
   }
+
+  // Get recommended articles 
+  getRecommended(): Observable<any> { 
+     return this.http.get<any>(`${this.apiUrl}/feeds/recommendations`);
+  }
+
 }

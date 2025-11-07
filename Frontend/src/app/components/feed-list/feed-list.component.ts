@@ -4,7 +4,7 @@ import {FormsModule} from '@angular/forms';
 import {DatePipe} from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FeedFilterPipe } from '../../pipes/feed-filter.pipe';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-feed-list',
@@ -31,8 +31,15 @@ export class FeedListComponent implements OnInit {
   itemsPerPage = 5;
   currentPage = 1;
 
-constructor(private feedService: FeedService) {}
+constructor(private feedService: FeedService, private router: Router) {}
 
+showRecommended(): void {
+   this.selectedFeed = { title: 'Recommended Articles' };
+  this.selectedFeedId = null; // unselect any feed
+  this.feedService.getRecommended().subscribe((res) => {
+  this.selectedFeedItems = res.recommendations; // same structure as feeds
+  });
+}
 
 ngOnInit(): void {
     this.loadFeeds();

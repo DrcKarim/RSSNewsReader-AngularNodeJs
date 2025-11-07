@@ -7,6 +7,11 @@
       <input [(ngModel)]="newFeedUrl" placeholder="Add feed..." />
       <button (click)="addFeed()">➕</button>
     </div>
+
+    <div class="recommended-section">
+       <button class="recommended-btn" (click)="showRecommended()">⭐ Recommended</button>
+    </div>
+
     <ul>
       <div class="search-container">
         <input type="text" placeholder="Search feeds..." [(ngModel)]="searchText" />

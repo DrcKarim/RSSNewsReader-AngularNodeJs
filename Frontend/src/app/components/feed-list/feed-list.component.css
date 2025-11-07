@@ -71,6 +71,40 @@ html, body {
   border-radius: 4px;
   cursor: pointer;
 }
+
+/*======Recommended button======= */
+.recommended-btn {
+  width: 100%;
+  padding: 10px 0;
+  margin: 8px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+
+.recommended-btn:hover {
+  background: linear-gradient(145deg, #f9f9f9, #eaeaea);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.recommended-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.recommended-btn::before {
+  content: "⭐ ";
+  font-size: 16px;
+  vertical-align: middle;
+}
+
 /*======Search input======= */
 .search-container {
   position: relative;

@@ -155,11 +155,28 @@ const refreshFeed = async (req, res) => {
   }
 };
 
+
+
+const getRecommendations = async (req, res) => {
+  try {
+    const items = await FeedItem.findAll({
+      order: [['pubDate', 'DESC']],
+      limit: 10
+    });
+
+    res.json({ recommendations: items });
+  } catch (error) {
+    console.error('Error fetching recommendations:', error);
+    res.status(500).json({ message: 'Failed to fetch recommended articles' });
+  }
+};
+
 module.exports = {
   getFeed,
   getAllFeeds,
   getFeedItemsByFeedId,
-    updateFeed,
+  updateFeed,
   deleteFeed,
-  refreshFeed
+  refreshFeed,
+  getRecommendations
 };
