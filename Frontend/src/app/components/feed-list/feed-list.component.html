@@ -10,6 +10,8 @@
 
     <div class="recommended-section">
        <button class="recommended-btn" (click)="showRecommended()">⭐ Recommended</button>
+        <button class="recommended-btn alt" (click)="showSmartRecommended()">🎯 Smart Recommendation</button>
+         <button class="recommended-btn ai" (click)="showAIRecommended()">🧠 AI</button>
     </div>
 
     <ul>
@@ -23,23 +25,42 @@
     </ul>
   </aside>
 
-  <!-- Feed Content -->
-  <main class="feed-panel">
-    <div class="feed-header" *ngIf="selectedFeed">
-      <h2>{{ selectedFeed.title || 'Untitled Feed' }}</h2>
-      <div class="buttons">
-        <button (click)="refreshFeed()"  [disabled]="isRefreshing">🔄</button>
-        <span *ngIf="isRefreshing" class="loading-text">Refreshing...</span>
-        <button (click)="startEditing(selectedFeed)">✏️</button>
-        <button (click)="deleteFeed(selectedFeed.id)">🗑️</button>
-      </div>
+ <!-- Feed Content -->
+<main class="feed-panel">
+
+  <!-- 🧠 Loading animation for AI recommendations -->
+  <div *ngIf="isAILoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Generating smart AI recommendations... please wait 🧠</p>
+  </div>
+
+  <!-- 📰 Feed header -->
+  <div class="feed-header" *ngIf="!isAILoading && selectedFeed">
+    <h2>{{ selectedFeed.title || 'Untitled Feed' }}</h2>
+    <div class="buttons">
+      <button (click)="refreshFeed()" [disabled]="isRefreshing">🔄</button>
+      <span *ngIf="isRefreshing" class="loading-text">Refreshing...</span>
+      <button (click)="startEditing(selectedFeed)">✏️</button>
+      <button (click)="deleteFeed(selectedFeed.id)">🗑️</button>
     </div>
+  </div>
+
+  <!-- ✅ Articles loop (only shown when not loading) -->
+  <div *ngIf="!isAILoading">
     <div *ngFor="let item of paginatedItems" class="feed-item">
-      <a [href]="item.link" target="_blank">{{ item.title }}</a>
+      <a
+        [href]="item.link"
+        target="_blank"
+        (click)="markAsRead(item.id)"
+      >
+        {{ item.title }}
+      </a>
       <p class="summary">{{ item.description }}</p>
       <p class="date">{{ item.pubDate | date:'medium' }}</p>
     </div>
-  </main>
+  </div>
+
+</main>
 
   <!--  POPUP MODAL -->
   <div class="modal-backdrop" *ngIf="editingFeed">

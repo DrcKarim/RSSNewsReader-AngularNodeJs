@@ -50,8 +50,20 @@ export class FeedService {
   }
 
   // Get recommended articles 
-  getRecommended(): Observable<any> { 
-     return this.http.get<any>(`${this.apiUrl}/feeds/recommendations`);
-  }
+  // getRecommended(): Observable<any> { 
+  //   return this.http.get<any>(`${this.apiUrl}/feeds/recommendations`);
+  // }
 
+sendRecommended(readIds: number[]): Observable<any> {
+  return this.http.post<any>(`${this.apiUrl}/feeds/recommendations`, { readIds });
+}
+
+
+getSmartRecommended(readIds: number[]): Observable<any> {
+  return this.http.post<any>(`${this.apiUrl}/feeds/smart-recommendations`, { readIds });
+}
+
+getAIRecommended(readIds: number[]) {
+  return this.http.post<any>(`${this.apiUrl}/feeds/ai-recommendations`, { readIds });
+}
 }

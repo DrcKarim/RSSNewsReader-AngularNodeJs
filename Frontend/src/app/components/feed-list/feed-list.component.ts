@@ -34,10 +34,56 @@ export class FeedListComponent implements OnInit {
 constructor(private feedService: FeedService, private router: Router) {}
 
 showRecommended(): void {
-   this.selectedFeed = { title: 'Recommended Articles' };
-  this.selectedFeedId = null; // unselect any feed
-  this.feedService.getRecommended().subscribe((res) => {
-  this.selectedFeedItems = res.recommendations; // same structure as feeds
+   const readIds = JSON.parse(localStorage.getItem('readIds') || '[]');
+
+  this.selectedFeed = { title: 'Recommended Articles' };
+  this.selectedFeedId = null;
+
+  // ✅ Send IDs and receive recommendations in one POST
+  this.feedService.sendRecommended(readIds).subscribe({
+    next: (res) => {
+      // Here, we "get" the articles from backend response
+      this.selectedFeedItems = res.recommendations;
+    },
+    error: (err) => {
+      console.error('Error fetching recommended articles:', err);
+    }
+  });
+}
+
+showSmartRecommended(): void {
+  const readIds = JSON.parse(localStorage.getItem('readIds') || '[]');
+  this.selectedFeed = { title: '🎯 Smart Recommendations' };
+  this.selectedFeedId = null;
+
+  this.feedService.getSmartRecommended(readIds).subscribe({
+    next: (res) => {
+      this.selectedFeedItems = res.recommendations;
+    },
+    error: (err) => {
+      console.error('Error fetching smart recommendations:', err);
+    }
+  });
+}
+
+isAILoading = false;
+
+showAIRecommended(): void {
+  this.isAILoading = true;
+  this.selectedFeed = { title: '🧠 AI Recommendations' };
+  this.selectedFeedId = null;
+
+  const readIds = JSON.parse(localStorage.getItem('readIds') || '[]');
+
+  this.feedService.getAIRecommended(readIds).subscribe({
+    next: (res) => {
+      this.selectedFeedItems = res.recommendations;
+      this.isAILoading = false;
+    },
+    error: (err) => {
+      console.error('AI Recommendation error:', err);
+      this.isAILoading = false;
+    }
   });
 }
 
@@ -159,6 +205,15 @@ updateFeed(): void {
       this.editingFeed = null;
     });
   }
+
+/* Track click */
+markAsRead(articleId: number): void {
+  const read = JSON.parse(localStorage.getItem('readIds') || '[]');
+  if (!read.includes(articleId)) {
+    read.push(articleId);
+    localStorage.setItem('readIds', JSON.stringify(read));
+  }
+}
 
 /*
 The paginatedItems getter returns a subset of selectedFeedItems for the current page, based on pagination settings.

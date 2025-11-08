@@ -1,7 +1,7 @@
 const { parseRSS } = require('../services/rssService');
 const { Feed, FeedItem } = require('../models');
 const { parseFeedById } = require('../utils/feedParser');
-
+const { Op } = require('sequelize');
 
 /*
 The getFeed function receives an RSS feed URL, checks if it's already in the database, and if not, it parses the feed,
@@ -156,7 +156,7 @@ const refreshFeed = async (req, res) => {
 };
 
 
-
+/*
 const getRecommendations = async (req, res) => {
   try {
     const items = await FeedItem.findAll({
@@ -169,6 +169,167 @@ const getRecommendations = async (req, res) => {
     console.error('Error fetching recommendations:', error);
     res.status(500).json({ message: 'Failed to fetch recommended articles' });
   }
+}; */
+const getRecommendations = async (req, res) => {
+  try {
+    const { readIds = [] } = req.body;
+
+    const recommendations = await FeedItem.findAll({
+      where: { id: { [Op.notIn]: readIds } },
+      order: [['pubDate', 'DESC']],
+      limit: 10
+    });
+
+    // ✅ send new unread articles back to frontend
+    res.json({ recommendations });
+    // console.error('recommendations:', recommendations);
+  } catch (error) {
+    console.error('Error fetching recommendations:', error);
+    res.status(500).json({ message: 'Failed to fetch recommendations' });
+  }
+};
+
+const getSmartRecommendations = async (req, res) => {
+  try {
+    const { readIds = [] } = req.body;
+
+    // Get titles of read articles
+    const readArticles = await FeedItem.findAll({
+      where: { id: { [Op.in]: readIds } },
+      attributes: ['title']
+    });
+
+    // Extract keywords from read titles
+    const keywords = readArticles
+      .map(a => a.title.split(' '))
+      .flat()
+      .map(word => word.toLowerCase())
+      .filter(w => w.length > 4); // ignore small words
+
+    // If no keywords, fallback to recent
+    if (keywords.length === 0) {
+      const latest = await FeedItem.findAll({
+        order: [['pubDate', 'DESC']],
+        limit: 10
+      });
+      return res.json({ recommendations: latest });
+    }
+
+    // Find other articles with similar words
+    const recommendations = await FeedItem.findAll({
+      where: {
+        id: { [Op.notIn]: readIds },
+        [Op.or]: keywords.map(k => ({
+          title: { [Op.iLike]: `%${k}%` }
+        }))
+      },
+      limit: 10
+    });
+
+    res.json({ recommendations });
+  } catch (error) {
+    console.error('Error fetching smart recommendations:', error);
+    res.status(500).json({ message: 'Failed to fetch smart recommendations' });
+  }
+};
+
+const getAIRecommendations = async (req, res) => {
+  try {
+    const { readIds = [] } = req.body;
+    console.log("🧠 [AI Recommendations] Received readIds:", readIds);
+
+    // 1️⃣ Fetch titles of read articles (if any)
+    const readArticles = readIds.length
+      ? await FeedItem.findAll({
+          where: { id: { [Op.in]: readIds } },
+          attributes: ['title'],
+          limit: 50
+        })
+      : [];
+
+    const titles = readArticles.map(a => a.title);
+    console.log("📚 Titles sent to Ollama:", titles);
+
+    // 2️⃣ Build prompt
+    const prompt = `
+You are a news recommendation assistant.
+User recently read these article titles (can be empty):
+${titles.length ? titles.map((t, i) => `${i + 1}. ${t}`).join('\n') : '(none)'}
+
+Return ONLY a valid JSON array of 3-6 concise keywords or topics
+relevant to what the user might like next. Examples: ["AI", "healthcare", "finance"]
+No commentary, no markdown, just JSON.
+`;
+    console.log("📝 Prompt for Ollama:\n", prompt);
+
+    // 3️⃣ Call Ollama locally
+    const resp = await fetch('http://localhost:11434/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'llama3.2-vision',
+        prompt,
+        stream: false
+      }),
+    });
+
+    console.log("📡 Ollama response status:", resp.status);
+
+    if (!resp.ok) {
+      throw new Error(`Ollama HTTP ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    console.log("📥 Full Ollama JSON response:", data);
+
+    const raw = (data && data.response) || '[]';
+    console.log("🧾 Raw Ollama text output:", raw);
+
+    // 4️⃣ Parse keywords safely
+    let keywords = [];
+    try {
+      keywords = JSON.parse(raw);
+      console.log("✅ Parsed keywords (JSON):", keywords);
+    } catch {
+      console.warn("⚠️ Ollama returned non-JSON text, attempting cleanup...");
+      keywords = raw
+        .replace(/[\[\]"']/g, '')
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 1);
+      console.log("✅ Parsed keywords (fallback):", keywords);
+    }
+
+    // 5️⃣ If no keywords, fallback
+    if (!Array.isArray(keywords) || keywords.length === 0) {
+      console.log("⚠️ No valid keywords, returning latest unread fallback.");
+      const fallback = await FeedItem.findAll({
+        where: { id: { [Op.notIn]: readIds } },
+        order: [['pubDate', 'DESC']],
+        limit: 10
+      });
+      return res.json({ recommendations: fallback, keywords: [] });
+    }
+
+    // 6️⃣ Query DB by AI keywords
+    console.log("🔍 Searching DB for articles with keywords:", keywords);
+    const recommendations = await FeedItem.findAll({
+      where: {
+        id: { [Op.notIn]: readIds },
+        [Op.or]: keywords.map(k => ({
+          title: { [Op.iLike]: `%${k}%` }
+        }))
+      },
+      order: [['pubDate', 'DESC']],
+      limit: 12
+    });
+
+    console.log("✅ Found recommended articles:", recommendations.length);
+    return res.json({ recommendations, keywords });
+  } catch (error) {
+    console.error("❌ AI recos error:", error);
+    res.status(500).json({ message: "AI recommendation failed" });
+  }
 };
 
 module.exports = {
@@ -178,5 +339,7 @@ module.exports = {
   updateFeed,
   deleteFeed,
   refreshFeed,
-  getRecommendations
+  getRecommendations,
+  getSmartRecommendations,
+  getAIRecommendations
 };
