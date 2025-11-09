@@ -30,10 +30,11 @@ export class FeedListComponent implements OnInit {
   isRefreshing = false;
   itemsPerPage = 5;
   currentPage = 1;
+  isAILoading = false;
 
 constructor(private feedService: FeedService, private router: Router) {}
 
-
+/* This recommendation methos is the simplest one show what the user still didn't read yet */
 showRecommended(): void {
    const readIds = JSON.parse(localStorage.getItem('readIds') || '[]');
 
@@ -67,8 +68,9 @@ showSmartRecommended(): void {
   });
 }
 
-isAILoading = false;
 
+
+/* This this show method is showing the AI recommendation based on the user clicks */
 showAIRecommended(): void {
   this.isAILoading = true;
   this.selectedFeed = { title: '🧠 AI Recommendations' };
