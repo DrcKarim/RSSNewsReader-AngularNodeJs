@@ -53,6 +53,7 @@ showRecommended(): void {
   });
 }
 
+/* This smart recommendation is showing article based on what user read */
 showSmartRecommended(): void {
   const readIds = JSON.parse(localStorage.getItem('readIds') || '[]');
   this.selectedFeed = { title: '🎯 Smart Recommendations' };
