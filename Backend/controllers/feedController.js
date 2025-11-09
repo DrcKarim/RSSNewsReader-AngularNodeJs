@@ -233,6 +233,8 @@ const getSmartRecommendations = async (req, res) => {
   }
 };
 
+/*This function use AI it call ollama model giving him a prompte contain 3 keyword extracted from the title 
+that the user click on they links in the frontend */
 const getAIRecommendations = async (req, res) => {
   try {
     const { readIds = [] } = req.body;

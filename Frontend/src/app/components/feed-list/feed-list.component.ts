@@ -33,6 +33,7 @@ export class FeedListComponent implements OnInit {
 
 constructor(private feedService: FeedService, private router: Router) {}
 
+
 showRecommended(): void {
    const readIds = JSON.parse(localStorage.getItem('readIds') || '[]');
 
@@ -206,7 +207,7 @@ updateFeed(): void {
     });
   }
 
-/* Track click */
+/* Track click when user click on any link the click tracked and sent to the backend */
 markAsRead(articleId: number): void {
   const read = JSON.parse(localStorage.getItem('readIds') || '[]');
   if (!read.includes(articleId)) {
