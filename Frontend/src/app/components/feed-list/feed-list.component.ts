@@ -34,6 +34,54 @@ export class FeedListComponent implements OnInit {
 
 constructor(private feedService: FeedService, private router: Router) {}
 
+/* 
+showByCategory(): void {
+  this.selectedFeed = { title: 'Articles par catégorie' };
+  this.selectedFeedId = null;
+
+  // Load a default category (you can change this later)
+  this.feedService.getByCategory('Technologie').subscribe({
+    next: (res) => {
+      this.selectedFeedItems = res;
+    },
+    error: (err) => {
+      console.error('Error fetching articles by category:', err);
+    }
+  });
+}
+*/
+
+showByCategory(): void {
+  this.selectedFeed = { title: 'Articles par catégorie' };
+  this.selectedFeedId = null;
+  this.selectedFeedItems = [];
+
+  // Force Angular to detect the change
+  setTimeout(() => {}, 0);
+}
+
+// 🔹 Load articles by category
+loadCategory(event: Event): void {
+  const select = event.target as HTMLSelectElement;
+  const category = select.value;
+
+  if (!category) {
+    this.selectedFeedItems = [];
+    return;
+  }
+
+  console.log('Selected category:', category);
+
+  this.feedService.getByCategory(category).subscribe({
+    next: (res) => {
+      this.selectedFeedItems = res;
+    },
+    error: (err) => {
+      console.error('Error fetching category articles:', err);
+    }
+  });
+}
+
 /* This recommendation methos is the simplest one show what the user still didn't read yet */
 showRecommended(): void {
    const readIds = JSON.parse(localStorage.getItem('readIds') || '[]');
@@ -76,9 +124,7 @@ showAIRecommended(): void {
   this.isAILoading = true;
   this.selectedFeed = { title: '🧠 AI Recommendations' };
   this.selectedFeedId = null;
-
   const readIds = JSON.parse(localStorage.getItem('readIds') || '[]');
-
   this.feedService.getAIRecommended(readIds).subscribe({
     next: (res) => {
       this.selectedFeedItems = res.recommendations;
@@ -132,7 +178,6 @@ Once the refresh is complete (or fails), it resets the loading indicator.
 refreshFeed(): void {
     if (!this.selectedFeedId) return;
     this.isRefreshing = true;
-
     this.feedService.refreshFeed(this.selectedFeedId).subscribe({
       next: () => {
         this.selectFeed(this.selectedFeedId!); // re-fetch

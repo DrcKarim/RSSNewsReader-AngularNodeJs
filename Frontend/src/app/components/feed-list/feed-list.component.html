@@ -9,6 +9,7 @@
     </div>
 
     <div class="recommended-section">
+      <button class="category-btn" (click)="showByCategory()">📰 Categories</button>
        <button class="recommended-btn" (click)="showRecommended()">⭐ Recommended</button>
         <button class="recommended-btn alt" (click)="showSmartRecommended()">🎯 Smart Recommendation</button>
          <button class="recommended-btn ai" (click)="showAIRecommended()">🧠 AI</button>
@@ -37,6 +38,20 @@
   <!-- 📰 Feed header -->
   <div class="feed-header" *ngIf="!isAILoading && selectedFeed">
     <h2>{{ selectedFeed.title || 'Untitled Feed' }}</h2>
+
+    <!-- 🧭 Category dropdown appears only when 'Articles par catégorie' is selected -->
+  <div *ngIf="true" class="category-dropdown">
+    <label for="category">Choisir une catégorie :</label>
+    <select id="category" (change)="loadCategory($event)">
+      <option value="">-- Sélectionner --</option>
+      <option value="Politique">Politique</option>
+      <option value="Économie">Économie</option>
+      <option value="Sport">Sport</option>
+      <option value="Technologie">Technologie</option>
+      <option value="Culture">Culture</option>
+    </select>
+  </div>
+
     <div class="buttons">
       <button (click)="refreshFeed()" [disabled]="isRefreshing">🔄</button>
       <span *ngIf="isRefreshing" class="loading-text">Refreshing...</span>
