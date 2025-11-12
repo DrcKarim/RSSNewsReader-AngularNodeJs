@@ -31,6 +31,7 @@ export class FeedListComponent implements OnInit {
   itemsPerPage = 5;
   currentPage = 1;
   isAILoading = false;
+  isCategoryView = false;
 
 constructor(private feedService: FeedService, private router: Router) {}
 
@@ -56,6 +57,8 @@ showByCategory(): void {
   this.selectedFeedId = null;
   this.selectedFeedItems = [];
 
+   // ✅ Show the dropdown
+  this.isCategoryView = true;
   // Force Angular to detect the change
   setTimeout(() => {}, 0);
 }
@@ -84,6 +87,7 @@ loadCategory(event: Event): void {
 
 /* This recommendation methos is the simplest one show what the user still didn't read yet */
 showRecommended(): void {
+   this.isCategoryView = false;
    const readIds = JSON.parse(localStorage.getItem('readIds') || '[]');
 
   this.selectedFeed = { title: 'Recommended Articles' };
@@ -103,6 +107,7 @@ showRecommended(): void {
 
 /* This smart recommendation is showing article based on what user read */
 showSmartRecommended(): void {
+  this.isCategoryView = false;
   const readIds = JSON.parse(localStorage.getItem('readIds') || '[]');
   this.selectedFeed = { title: '🎯 Smart Recommendations' };
   this.selectedFeedId = null;
@@ -121,6 +126,7 @@ showSmartRecommended(): void {
 
 /* This this show method is showing the AI recommendation based on the user clicks */
 showAIRecommended(): void {
+  this.isCategoryView = false;
   this.isAILoading = true;
   this.selectedFeed = { title: '🧠 AI Recommendations' };
   this.selectedFeedId = null;
@@ -161,11 +167,15 @@ to fetch and display the items for that feed,
 storing them in selectedFeedItems for rendering in the main panel.
 */
 selectFeed(feedId: number): void {
+    // Hide the category dropdown when selecting a feed
+    
     this.selectedFeedId = feedId;
     this.selectedFeed = this.feeds.find(f => f.id === feedId);
+    this.isCategoryView = false;
     this.feedService.getFeedItems(feedId).subscribe((res) => {
       this.selectedFeedItems = res.items;
     });
+
   }
 
 
