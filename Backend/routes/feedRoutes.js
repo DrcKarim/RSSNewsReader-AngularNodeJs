@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getFeed, getAllFeeds, getFeedItemsByFeedId, updateFeed, deleteFeed, refreshFeed, getRecommendations, getSmartRecommendations,getAIRecommendations } = require('../controllers/feedController');
+const { getFeed, getAllFeeds, getFeedItemsByFeedId, updateFeed, deleteFeed, refreshFeed, getRecommendations, getSmartRecommendations, getAIRecommendations, getByCategory } = require('../controllers/feedController');
 
 router.get('/', getAllFeeds);   // GET /api/feeds
 router.get('/:id/items', getFeedItemsByFeedId);  // List items for a feed
@@ -12,5 +12,7 @@ router.post('/feeds/:id/refresh', refreshFeed); // Refresh Route
 router.post('/recommendations', getRecommendations);
 router.post('/smart-recommendations', getSmartRecommendations);
 router.post('/ai-recommendations', getAIRecommendations);
+router.get('/category/:name',  getByCategory);
+
 
 module.exports = router;

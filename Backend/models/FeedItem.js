@@ -14,7 +14,13 @@ const FeedItem = sequelize.define('FeedItem', {
   link: DataTypes.STRING,
   description: DataTypes.TEXT,
   pubDate: DataTypes.DATE,
-  guid: { type: DataTypes.STRING, unique: true }
+  guid: { type: DataTypes.STRING, unique: true },
+  
+  // ✅ New column for category
+  category: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
 });
 
 FeedItem.belongsTo(Feed);

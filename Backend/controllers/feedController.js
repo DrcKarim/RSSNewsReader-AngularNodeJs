@@ -3,12 +3,35 @@ const { Feed, FeedItem } = require('../models');
 const { parseFeedById } = require('../utils/feedParser');
 const { Op } = require('sequelize');
 
+
+
+
+
+const getByCategory = async (req, res) => {
+  try {
+    const category = req.params.name;
+
+    const items = await FeedItem.findAll({
+      where: {
+        category: { [Op.iLike]: `%${category}%` } // case-insensitive search
+      },
+      order: [['pubDate', 'DESC']],
+      limit: 20
+    });
+
+    res.json(items);
+  } catch (error) {
+    console.error('Error fetching by category:', error);
+    res.status(500).json({ message: 'Failed to fetch category articles' });
+  }
+};
+
 /*
 The getFeed function receives an RSS feed URL, checks if it's already in the database, and if not, it parses the feed,
 stores its metadata and items, and then returns the feed and its items sorted by date. This allows the backend
 to dynamically process and store new feeds when a user adds them.
 */
-const getFeed = async (req, res) => {
+/* const getFeed = async (req, res) => {
   const { url } = req.body;
   try {
     let feed = await Feed.findOne({ where: { url } });
@@ -29,7 +52,8 @@ const getFeed = async (req, res) => {
         description: item.contentSnippet || item.content,
         pubDate: item.pubDate,
         guid: item.guid || item.link,
-        FeedId: feed.id
+        FeedId: feed.id,
+      //  category: guessCategory(item)
       }));
       await FeedItem.bulkCreate(feedItems, {
         ignoreDuplicates: true
@@ -45,6 +69,46 @@ const getFeed = async (req, res) => {
     if (error.message.includes('Failed to parse RSS feed')) {
       return res.status(400).json({ message: 'Invalid RSS feed' });
     }
+    res.status(500).json({ message: 'Error fetching and saving feed' });
+  }
+}; */
+
+const getFeed = async (req, res) => {
+  const { url } = req.body;
+  try {
+    let feed = await Feed.findOne({ where: { url } });
+
+    if (!feed) {
+      // Parse raw RSS
+      const parsed = await parseRSS(url);
+
+      if (!parsed?.items || parsed.items.length === 0) {
+        return res.status(400).json({ message: 'Invalid or unsupported RSS feed URL' });
+      }
+
+      // Create feed
+      feed = await Feed.create({
+        url,
+        title: parsed.title,
+        description: parsed.description,
+        lastFetched: new Date()
+      });
+
+      // 🔥🔥 Use YOUR category-aware parser
+      console.log("🔄 Parsing feed with category detection...");
+      await parseFeedById(feed.id);
+    }
+
+    // Always return items
+    const items = await FeedItem.findAll({
+      where: { FeedId: feed.id },
+      order: [['pubDate', 'DESC']]
+    });
+
+    res.json({ feed, items });
+
+  } catch (error) {
+    console.error(error.message);
     res.status(500).json({ message: 'Error fetching and saving feed' });
   }
 };
@@ -343,5 +407,6 @@ module.exports = {
   refreshFeed,
   getRecommendations,
   getSmartRecommendations,
-  getAIRecommendations
+  getAIRecommendations,
+  getByCategory
 };

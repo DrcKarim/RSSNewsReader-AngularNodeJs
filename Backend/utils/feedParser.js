@@ -1,34 +1,57 @@
 const Parser = require('rss-parser');
-const { Feed, FeedItem } = require('../models');
-
 const parser = new Parser();
+const Feed = require('../models/Feed');
+const FeedItem = require('../models/FeedItem');
+const categoryKeywords = require('../config/categoryKeywords.json');  // ✅ CHARGEMENT JSON
 
-/*
-The parseFeedById function re-fetches and updates the content of a specific RSS feed by its database ID.
-It looks up the feed, parses the latest data from its URL using rss-parser, deletes its old items,
-and saves the newly fetched ones. This function is useful for refreshing
-a feed’s content on demand and is exported for use in routes like refreshFeed.
-*/
+// -------------------------------------------------------------
+// 🔥 Fonction de détection de catégorie
+// -------------------------------------------------------------
+function detectCategory(title) {
+  console.log("🔥🔥🔥 detectCategory CALLED with title:", title);
+
+  title = title?.toLowerCase() || "";
+
+  for (const [category, keywords] of Object.entries(categoryKeywords)) {
+    if (keywords.some(word => title.includes(word))) {
+      console.log(`✔ CATEGORY FOUND: ${category} for title: ${title}`);
+      return category;
+    }
+  }
+
+  console.log("❌ NO CATEGORY FOUND for title:", title);
+  return "Général";
+}
+
+// -------------------------------------------------------------
+// 🔥 PARSE FEED BY ID
+// -------------------------------------------------------------
 async function parseFeedById(id) {
-    const feed = await Feed.findByPk(id);
-    if (!feed) throw new Error('Feed not found');
+  const feed = await Feed.findByPk(id);
+  if (!feed) throw new Error("Feed not found");
 
-    const parsed = await parser.parseURL(feed.url);
+  const parsed = await parser.parseURL(feed.url);
+  console.log("📌 parsed.items length:", parsed.items.length);
+  // Supprimer les anciens items
+  await FeedItem.destroy({ where: { FeedId: id } });
 
-    // Clear old items and save new ones
-    await FeedItem.destroy({ where: { FeedId: id } });
+  // Générer les nouveaux items
+  const itemsToCreate = parsed.items.map(item => ({
+    FeedId: id,
+    title: item.title || null,
+    link: item.link || null,
+    pubDate: item.pubDate || null,
+    description: item.contentSnippet || item.content || null,
+    guid: item.guid || item.link,
 
-    const items = parsed.items.map(item => ({
-        FeedId: id,
-        title: item.title,
-        link: item.link,
-        pubDate: item.pubDate,
-        description: item.contentSnippet || item.content || '',
-    }));
+    // 🟦 CATEGORIE AUTOMATIQUE
+    category: detectCategory(item.title || "")
+  }));
 
-    await FeedItem.bulkCreate(items);
+  // Insérer en base
+  await FeedItem.bulkCreate(itemsToCreate);
 
-    return feed;
+  return { feed, items: itemsToCreate };
 }
 
 module.exports = { parseFeedById };

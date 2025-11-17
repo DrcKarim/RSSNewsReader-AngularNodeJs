@@ -39,18 +39,18 @@
   <div class="feed-header" *ngIf="!isAILoading && selectedFeed">
     <h2>{{ selectedFeed.title || 'Untitled Feed' }}</h2>
 
-    <!-- 🧭 Category dropdown appears only when 'Articles par catégorie' is selected -->
-  <div *ngIf="isCategoryView" class="category-dropdown">
-    <label for="category">Choisir une catégorie :</label>
-    <select id="category" (change)="loadCategory($event)">
-      <option value="">-- Sélectionner --</option>
-      <option value="Politique">Politique</option>
-      <option value="Économie">Économie</option>
-      <option value="Sport">Sport</option>
-      <option value="Technologie">Technologie</option>
-      <option value="Culture">Culture</option>
-    </select>
-  </div>
+  <!-- 🧭 Category dropdown appears only when we click on "Categories" button -->
+<div *ngIf="isCategoryView" class="category-dropdown">
+  <label for="category">Choisir une catégorie :</label>
+  <select id="category" (change)="loadCategory($event)">
+    <option value="">-- Sélectionner --</option>
+
+    <!-- 🔥 Dynamic categories -->
+    <option *ngFor="let cat of categories" [value]="cat">
+      {{ cat }}
+    </option>
+  </select>
+</div>
 
     <div class="buttons">
       <button (click)="refreshFeed()" [disabled]="isRefreshing">🔄</button>

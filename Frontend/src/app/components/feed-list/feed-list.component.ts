@@ -33,6 +33,16 @@ export class FeedListComponent implements OnInit {
   isAILoading = false;
   isCategoryView = false;
 
+
+  categories: string[] = [
+  'Politique',
+  'Économie',
+  'Sport',
+  'Technologie',
+  'Culture',
+  'Général'
+];
+
 constructor(private feedService: FeedService, private router: Router) {}
 
 /* 
@@ -63,6 +73,22 @@ showByCategory(): void {
   setTimeout(() => {}, 0);
 }
 
+loadCategory(event: any): void {
+  const selectedCategory = (event.target as HTMLSelectElement).value;
+  if (!selectedCategory) return;
+  this.feedService.getByCategory(selectedCategory).subscribe({
+    next: (res) => {
+      console.log('Loaded articles for category:', selectedCategory);
+      this.isCategoryView = true;
+      this.selectedFeedItems = res;  // show articles for this category
+    },
+    error: (err) => {
+      console.error('Error loading category articles:', err);
+    }
+  });
+}
+
+/*
 // 🔹 Load articles by category
 loadCategory(event: Event): void {
   const select = event.target as HTMLSelectElement;
@@ -83,7 +109,7 @@ loadCategory(event: Event): void {
       console.error('Error fetching category articles:', err);
     }
   });
-}
+} */
 
 /* This recommendation methos is the simplest one show what the user still didn't read yet */
 showRecommended(): void {

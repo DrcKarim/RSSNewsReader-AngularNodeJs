@@ -1,0 +1,67 @@
+{
+  "Politique": [
+    "politique", "élection", "élections", "campagne",
+    "vote", "voter", "scrutin", "parti", "partis",
+    "député", "députés", "sénat", "sénateur", "parlement",
+    "gouvernement", "ministre", "président", "premier ministre",
+    "assemblée", "assemblée nationale", "république",
+    "constitution", "démocratie", "mairie", "conseil",
+    "loi", "décret", "réforme", "opposition", "coalition",
+    "politicien", "politiciens", "autorités", "diplomatie",
+    "conflit", "guerre", "otan", "onu"
+  ],
+
+  "Économie": [
+    "économie", "économique", "croissance", "pib",
+    "macroéconomie", "microéconomie", "entreprise", "entreprises",
+    "start-up", "startup", "fonds", "investissement", "investir",
+    "finance", "financier", "financière", "bourse", "boursier",
+    "marché", "marchés", "actions", "obligations", "taux",
+    "banque", "banques", "bancaire", "monétaire",
+    "inflation", "déflation", "budget", "budgétaire", "impôts",
+    "commerce", "commercial", "chômage", "emploi",
+    "salaire", "revenu", "pouvoir d'achat",
+    "industrie", "production", "manufacture",
+    "cryptomonnaie", "crypto", "bitcoin", "blockchain",
+    "exportation", "importation", "échanges",
+    "entrepreneur", "entrepreneuriat",
+    "startups", "licorne", "fusion", "acquisition"
+  ],
+
+  "Sport": [
+    "sport", "football", "foot", "ligue", "ligue 1",
+    "championnat", "match", "rencontre", "score",
+    "but", "buteur", "ballon", "nba", "basket",
+    "tennis", "grand chelem", "roland garros",
+    "athlétisme", "olympique", "olympiques", "jo",
+    "compétition", "tournoi", "rugby", "handball",
+    "cyclisme", "f1", "formula 1", "boxe", "mma",
+    "vainqueur", "finale", "demi-finale",
+    "classement", "stade"
+  ],
+
+  "Technologie": [
+    "technologie", "tech", "numérique",
+    "ia", "intelligence artificielle",
+    "algorithme", "machine learning", "deep learning",
+    "réseau", "réseaux", "internet", "web",
+    "cyber", "cyberattaque", "cybersécurité",
+    "hacker", "piratage", "cloud", "serveur",
+    "robot", "robotique", "innovation", "startup tech",
+    "semi-conducteur", "processeur", "puce",
+    "smartphone", "ordinateur", "logiciel", "app",
+    "data", "données", "big data"
+  ],
+
+  "Culture": [
+    "culture", "cinéma", "film", "films",
+    "acteur", "actrice", "réalisateur", "festival",
+    "musique", "concert", "album", "chanson",
+    "livre", "romans", "auteur", "édition",
+    "théâtre", "spectacle", "scène",
+    "musée", "exposition", "peinture", "art",
+    "culturel", "artiste", "danse", "podcast",
+    "série", "séries", "netflix", "documentaire"
+  ]
+}
+

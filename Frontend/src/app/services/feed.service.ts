@@ -67,8 +67,12 @@ getAIRecommended(readIds: number[]) {
   return this.http.post<any>(`${this.apiUrl}/feeds/ai-recommendations`, { readIds });
 }
 
-getByCategory(category: string): Observable<any> {
+/* getByCategory(category: string): Observable<any> {
   return this.http.get<any>(`${this.apiUrl}/feeds/by-category?category=${category}`);
+} */
+
+getByCategory(category: string) {
+  return this.http.get<any[]>(`${this.apiUrl}/feeds/category/${category}`);
 }
 
 }
